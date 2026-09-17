@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shape of Taste — MovieLens Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div id="app-shell">
+
+  <nav id="rail">
+    <div class="brand">The Shape of Taste</div>
+    <div class="brand-sub">MovieLens 20M — GroupLens Research</div>
+    <ul id="section-nav"></ul>
+    <div class="rail-footer">Runs client-side on a<br>sampled subset of the real dataset. No backend, statically hosted.</div>
+  </nav>
+
+  <main id="main">
+
+    <div id="control-bar">
+      <div class="control-group">
+        <label>Years</label>
+        <input type="number" id="year-from" />
+        <span>–</span>
+        <input type="number" id="year-to" />
+      </div>
+      <div class="divider"></div>
+      <div class="control-group">
+        <label>Min ratings</label>
+        <input type="range" id="min-ratings" min="10" max="1000" step="10" value="50">
+        <span id="min-ratings-value" class="mono">50</span>
+      </div>
+      <div class="divider"></div>
+      <div class="control-group">
+        <label>Status</label>
+        <span id="control-status" class="mono">loading…</span>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <header id="hero">
+      <h1>Movies Through Data</h1>
+      <p class="lede">
+        A sample of MovieLens's ratings and tag-genome data, statically hosted.
+        Lets you explore what the best movies are, as well as what audience
+        agrees on, argue about, and value beyond the star rating.
+      </p>
+      <div class="stat-row" id="hero-stats">
+        <div class="stat"><span class="num">—</span><span class="label">loading</span></div>
+      </div>
+    </header>
+
+    <!-- 1. RATING DISTRIBUTION -->
+    <section class="section" id="sec-distribution" data-label="Rating distribution">
+      <div class="kicker">01 — Distribution</div>
+      <h2>Audiences don't rate on a curve</h2>
+      <p class="blurb">
+        If ratings were purely honest signal, you'd expect something close to
+        a bell curve centered on 3 stars, but they aren't. A likely reason: people
+        mostly rate movies they chose to watch and finish, so self-selection
+        skews the distribution upward before any opinion is even formed.
+      </p>
+      <p class="blurb">
+        Also notice the shape: half-star values (0.5, 1.5, 2.5…) are
+        consistently rarer than whole-star values right next to them. Half-star
+        ratings were added to MovieLens after whole stars, so people default to
+        the round number unless a movie specifically feels "in between."
+      </p>
+      <div class="why-useful">
+        <span class="label">Is it useful?</span>
+        e.g., anyone building a recommender or interpreting "average rating" needs
+        to know the baseline isn't 3.0 — it's closer to 3.5–4.0, so a movie
+        rated exactly average is still being actively avoided by comparison.
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Ratings by star value</span><span id="dist-total" class="mono"></span></div>
+        <canvas id="chart-distribution"></canvas>
+        <div class="chart-caption" id="dist-caption"></div>
+      </div>
+    </section>
+
+    <!-- 2. YEARLY VOLUME -->
+    <section class="section" id="sec-volume" data-label="Rating volume over time">
+      <div class="kicker">02 — Trend</div>
+      <h2>The rating boom</h2>
+      <p class="blurb">
+        Rating volume by year — a mix of MovieLens's own user base growing
+        and broader online rating behavior becoming normal through the 2000s.
+      </p>
+      <p class="blurb">
+        MovieLens switched from whole-star to half-star
+        ratings in 2003, and the site has gone through several interface
+        redesigns and promotional pushes since 1997. Each tends to bring a
+        wave of returning or newly-signed-up raters. A falloff after 2008 is
+        plausibly ordinary user-base attrition as rating activity gradually
+        shifted to other platforms (Letterboxd, IMDB, social media), though the
+        very last year in this dataset (2015) is also just mechanically
+        undercounted, since the data was cut off in March rather than
+        December.
+      </p>
+      <div class="why-useful">
+        <span class="label">What can you do with it?</span>
+        Sanity-checking any year-over-year comparison elsewhere in this
+        dashboard.
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Ratings submitted per year</span></div>
+        <canvas id="chart-volume"></canvas>
+        <div class="chart-caption" id="volume-caption"></div>
+      </div>
+    </section>
+
+    <!-- 3. AGREEMENT SCATTER -->
+    <section class="section" id="sec-agreement" data-label="Popularity vs. rating">
+      <div class="kicker">03 — Relationship</div>
+      <h2>What we actually agree on</h2>
+      <p class="blurb">
+        Each point is one movie: how many people rated it (x) against its
+        average score (y). The top-right cluster — widely seen and well
+        liked — is real consensus. High scores from a handful of viewers
+        (top-left) are a different thing: a niche favorite, not a broad one.
+      </p>
+      <div class="why-useful">
+        <span class="label">Useful for</span>
+        Telling apart "genuinely loved" from "high score, low sample size"
+        before using a rating as evidence of quality.
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Rating count vs. average rating</span><span id="agreement-count" class="mono"></span></div>
+        <canvas id="chart-agreement"></canvas>
+        <div class="chart-caption">Hover a point for the title. Adjust the min-ratings control above to change the noise floor.</div>
+      </div>
+    </section>
+
+    <!-- 4. DIVISIVE MOVIES -->
+    <section class="section" id="sec-divisive" data-label="Most divisive movies">
+      <div class="kicker">04 — Ranking</div>
+      <h2>The most divisive movies</h2>
+      <p class="blurb">
+        Ranked by how spread out the ratings are (standard deviation), not
+        by average. These are the films people can't agree on.
+      </p>
+      <div class="why-useful">
+        <span class="label">Useful for</span>
+        We are flagging titles where "average rating" is actively misleading.
+        3.0 average can mean "everyone thought it was fine" or "half loved
+        it, half hated it."
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Highest rating spread (min. sample size applies)</span></div>
+        <table class="rank-table" id="divisive-table"></table>
+      </div>
+    </section>
+
+    <!-- 5. GENRES -->
+    <section class="section" id="sec-genres" data-label="Genres ranked">
+      <div class="kicker">05 — Category comparison</div>
+      <h2>Genres, ranked</h2>
+      <p class="blurb">
+        Average rating and total rating volume by genre. Documentaries and
+        War films often score higher on average with a smaller, more
+        self-selecting audience; high-volume genres like Comedy and Action
+        reach a broader, more mixed crowd, which tends to average out lower.
+      </p>
+      <p class="blurb">
+        Bar length here is a <strong>weighted rating</strong>, meaning genres with fewer ratings get pulled toward the overall mean, so a genre with only a few thousand
+        ratings can't look artificially better or worse than one with
+        millions just from small-sample noise. Bar color still shows raw
+        volume.
+      </p>
+      <div class="why-useful">
+        <span class="label">Why is it useful?</span>
+        Understanding that "genre X rates higher" often reflects who chooses
+        to watch it, not that the genre is inherently better made.
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Weighted rating by genre, adjusted for sample size — color = volume</span></div>
+        <div class="chart-tall"><canvas id="chart-genres"></canvas></div>
+      </div>
+    </section>
+
+    <!-- 6. TAG GENOME: SINGLE MOVIE -->
+    <section class="section" id="sec-genome" data-label="Beyond stars">
+      <div class="kicker">06 — Beyond the star rating</div>
+      <h2>What a movie actually <em>is</em>, not just how it scored</h2>
+      <p class="blurb">
+        The tag genome scores each movie on ~1,100 qualitative traits, learned
+        from tags, reviews, and ratings. Search a movie to see its strongest
+        traits.
+      </p>
+      <div class="inline-controls">
+        <div class="search-wrap">
+          <input type="text" id="genome-search" placeholder="Search a movie title…" autocomplete="off">
+          <div id="search-results"></div>
+        </div>
+        <span id="genome-selected" class="mono"></span>
+      </div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Top traits by genome relevance</span></div>
+        <div class="chart-tall"><canvas id="chart-genome"></canvas></div>
+      </div>
+    </section>
+
+    <!-- 7. TASTE FINGERPRINT -->
+    <section class="section" id="sec-fingerprint" data-label="Taste fingerprints">
+      <div class="kicker">07 — Cross-genre comparison</div>
+      <h2>Taste across genres</h2>
+      <p class="blurb">
+        The traits that vary most across genres averaged per genre. This is what actually separates one
+        genre from another beyond the label: which qualities each one leans
+        into.
+      </p>
+      <div class="chip-row" id="fingerprint-genre-chips"></div>
+      <div class="chart-panel">
+        <div class="panel-title"><span>Genre x trait average relevance</span></div>
+        <table class="heatmap-table" id="fingerprint-table"></table>
+      </div>
+    </section>
+
+    <!-- CONCLUSION -->
+    <section class="section" id="conclusion" data-label="Conclusion">
+      <div class="kicker">Conclusion</div>
+      <h2>Rating alone is a thin signal</h2>
+      <p class="blurb">
+        Across every chapter here, the same idea holds: a single star average
+        collapses too much, and self-selection, sample size, disagreement, and
+        genre context all get flattened into one number. Rating count,
+        spread, genre baseline, and genome traits each recover a piece of
+        information that gets lost. Combined, they're a far better basis for a
+        recommendation or an argument about what's actually good.
+      </p>
+      <div class="section-grid" id="scorecard"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/local-data-api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+/* =====================================================================
+   THEME — edit only this block to change the whole dashboard's colors.
+   Everything below reads from these custom properties.
+   ===================================================================== */
+:root {
+  /* Data-series colors (the four supplied brand colors) */
+  --color-yellow: #F8FF95;
+  --color-green:  #7BE77E;
+  --color-blue:   #7A8CF0;
+  --color-purple: #A45FE6;
+
+  /* Surfaces — light, paper-toned, not stark white */
+  --color-bg: #FBFAF6;
+  --color-panel: #FFFFFF;
+  --color-panel-alt: #F3F2EC;
+
+  /* Text */
+  --color-ink: #1C1B18;
+  --color-ink-muted: #5B5A54;
+  --color-ink-faint: #93918A;
+
+  /* Structure */
+  --color-border: #E3E1D8;
+  --color-border-strong: #C9C7BC;
+
+  /* Semantic accent (used for the single primary highlight per chart) */
+  --color-accent: var(--color-purple);
+  --color-accent-ink: #3B1E5C;
+
+  /* Type */
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Source Serif 4", serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+/* ===================================================================== */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+::selection { background: var(--color-yellow); color: var(--color-ink); }
+
+a { color: var(--color-accent-ink); }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+p { line-height: 1.55; margin: 0 0 0.8em; }
+p:last-child { margin-bottom: 0; }
+
+code, .mono { font-family: var(--font-mono); }
+
+/* ---- Layout shell ---- */
+#app-shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* ---- Left rail: nav + branding ---- */
+#rail {
+  border-right: 1px solid var(--color-border);
+  padding: 1.6rem 1.2rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#rail .brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+}
+
+#rail .brand-sub {
+  font-size: 0.72rem;
+  color: var(--color-ink-faint);
+  margin-bottom: 2rem;
+  font-family: var(--font-mono);
+}
+
+#section-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#section-nav li a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: var(--color-ink-faint);
+  font-size: 0.84rem;
+  padding: 0.4rem 0.3rem;
+  border-left: 2px solid transparent;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+
+#section-nav li a .idx {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink-faint);
+  min-width: 1.4em;
+}
+
+#section-nav li a.active {
+  color: var(--color-ink);
+  border-left-color: var(--color-accent);
+  font-weight: 600;
+}
+
+#section-nav li a:hover { color: var(--color-ink); }
+
+#rail .rail-footer {
+  margin-top: auto;
+  font-size: 0.7rem;
+  color: var(--color-ink-faint);
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- Main column ---- */
+#main {
+  min-width: 0;
+}
+
+/* Sticky control bar */
+#control-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.7rem 2.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem;
+  font-size: 0.8rem;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-ink-muted);
+}
+
+.control-group label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-ink-faint);
+}
+
+.control-group input[type="number"],
+.control-group select,
+.control-group input[type="text"] {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 2px;
+  padding: 0.28rem 0.45rem;
+  color: var(--color-ink);
+  width: 4.4em;
+}
+
+.control-group input[type="number"] { width: 5.6em; }
+
+.control-group input[type="text"] { width: 11em; }
+
+.control-group select { width: auto; min-width: 8em; }
+
+.control-group input[type="range"] {
+  width: 8em;
+  accent-color: var(--color-accent);
+}
+
+#control-bar .divider {
+  width: 1px;
+  height: 1.2rem;
+  background: var(--color-border);
+}
+
+/* ---- Sections ---- */
+.section {
+  padding: 2.6rem 2.2rem;
+  border-bottom: 1px solid var(--color-border);
+  max-width: 1180px;
+}
+
+.section .kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.section .blurb {
+  max-width: 68ch;
+  color: var(--color-ink-muted);
+  margin-bottom: 1.3rem;
+}
+
+.section .blurb strong { color: var(--color-ink); }
+
+.why-useful {
+  font-size: 0.86rem;
+  color: var(--color-ink-muted);
+  max-width: 68ch;
+  border-left: 2px solid var(--color-border-strong);
+  padding-left: 0.8rem;
+  margin: 1rem 0 1.3rem;
+}
+.why-useful .label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-faint);
+  display: block;
+  margin-bottom: 0.15em;
+}
+
+/* ---- Chart panel ---- */
+.chart-panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  padding: 1.3rem 1.5rem 1rem;
+}
+
+.chart-panel .panel-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-panel canvas { width: 100% !important; }
+
+.chart-tall { height: 420px; position: relative; }
+.chart-tall canvas { height: 100% !important; }
+
+.chart-caption {
+  font-size: 0.8rem;
+  color: var(--color-ink-muted);
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+}
+
+.chart-caption .num { color: var(--color-accent-ink); font-weight: 600; }
+
+/* ---- Inline controls within a section (e.g. movie search) ---- */
+.inline-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.82rem;
+  flex-wrap: wrap;
+}
+
+.inline-controls input[type="text"] {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 2px;
+  padding: 0.35rem 0.6rem;
+  min-width: 16em;
+  background: var(--color-panel);
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 16em;
+}
+
+#search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.search-dropdown {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-top: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.search-dropdown .item {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border);
+}
+.search-dropdown .item:hover { background: var(--color-panel-alt); }
+.search-dropdown .item .title { color: var(--color-ink); }
+.search-dropdown .item .meta { color: var(--color-ink-faint); font-size: 0.72rem; font-family: var(--font-mono); }
+
+/* ---- Toggle chips (compact, not pill buttons) ---- */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 2px;
+  padding: 0.25rem 0.55rem;
+  background: var(--color-panel);
+  color: var(--color-ink-muted);
+  cursor: pointer;
+}
+
+.chip.active {
+  border-color: var(--color-accent-ink);
+  color: var(--color-accent-ink);
+  background: color-mix(in srgb, var(--color-accent) 15%, var(--color-panel));
+}
+
+/* ---- Heatmap table (genre fingerprint) ---- */
+.heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+.heatmap-table th, .heatmap-table td {
+  padding: 0.4rem 0.55rem;
+  text-align: right;
+  border-bottom: 1px solid var(--color-border);
+}
+.heatmap-table th:first-child, .heatmap-table td:first-child {
+  text-align: left;
+  font-family: var(--font-body);
+  color: var(--color-ink-muted);
+}
+.heatmap-table thead th {
+  color: var(--color-ink-faint);
+  font-weight: 400;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: 5.5em;
+  vertical-align: bottom;
+  text-align: left;
+}
+.heatmap-cell { color: var(--color-ink); }
+
+/* ---- Ranking table (divisive movies) ---- */
+.rank-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.rank-table th, .rank-table td {
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+.rank-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-weight: 400;
+}
+.rank-table td.num { font-family: var(--font-mono); text-align: right; }
+.rank-table tr:hover { background: var(--color-panel-alt); }
+
+/* ---- Hero ---- */
+#hero {
+  padding: 3.2rem 2.2rem 2.4rem;
+  border-bottom: 1px solid var(--color-border);
+  max-width: 1180px;
+}
+#hero h1 {
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
+  margin-bottom: 0.6rem;
+}
+#hero .lede {
+  max-width: 62ch;
+  color: var(--color-ink-muted);
+  font-size: 1.02rem;
+  margin-bottom: 1.6rem;
+}
+#hero .stat-row {
+  display: flex;
+  gap: 2.2rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.1rem;
+}
+#hero .stat-row .stat .num {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  color: var(--color-accent-ink);
+  display: block;
+}
+#hero .stat-row .stat .label {
+  font-size: 0.75rem;
+  color: var(--color-ink-faint);
+}
+
+/* ---- Conclusion ---- */
+#conclusion .section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px;
+  background: var(--color-border);
+  border: 1px solid var(--color-border);
+  margin: 1.3rem 0;
+}
+#conclusion .cell {
+  background: var(--color-panel);
+  padding: 1rem 1.2rem;
+}
+#conclusion .cell .num {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  color: var(--color-accent-ink);
+}
+#conclusion .cell .label {
+  font-size: 0.78rem;
+  color: var(--color-ink-faint);
+  margin-top: 0.25em;
+}
+
+/* ---- Status / errors ---- */
+.loading-msg, .error-msg {
+  font-size: 0.82rem;
+  color: var(--color-ink-faint);
+  font-family: var(--font-mono);
+}
+.error-msg { color: #B5391F; }
+
+/* ---- Legend (only where needed) ---- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  font-size: 0.76rem;
+  color: var(--color-ink-muted);
+  margin-top: 0.7rem;
+}
+.legend .swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  border-radius: 1px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  #app-shell { grid-template-columns: 1fr; }
+  #rail { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--color-border); }
+  .section { padding: 2rem 1.2rem; }
+  #control-bar { padding: 0.7rem 1.2rem; }
+}
